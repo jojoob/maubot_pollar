@@ -1,6 +1,8 @@
 # pollar
 A plugin for [maubot](https://github.com/maubot/maubot) that helps with polls in a matrix room. It responds to !poll messages and counts reactions.
 
+![Screenshot](./screenshot1.png)
+
 ## Usage
 Request help from the bot:
 ```
