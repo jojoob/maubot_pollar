@@ -86,7 +86,7 @@ class Poll:
         choice_list = "  \n".join(
             [f"{choice.emoji}: {choice.text}" for choice in self.choices]
         )
-        return f"""Poll created by {self.author} (ID: {self.index+1})
+        return f"""Poll created by <a href="https://matrix.to/#/{self.author}">{self.author}</a> (ID: {self.index+1})
 
 **{self.question}**
 
@@ -146,7 +146,7 @@ If the first character of a choice is an emoji it will be used for voting instea
         poll = await self.create_poll(evt, poll_setup)
         if poll:
             response = poll.get_poll()
-            poll.event_id = await evt.reply(response)
+            poll.event_id = await evt.reply(response, allow_html=True)
             for choice in poll.choices:
                 await evt.client.react(evt.room_id, poll.event_id, choice.emoji)
 
