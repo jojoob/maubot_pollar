@@ -2,6 +2,11 @@
 A plugin for [maubot](https://github.com/maubot/maubot) that helps with polls in a matrix room. It responds to !poll messages and counts reactions.
 
 ## Usage
+Request help from the bot:
+```
+!pollhelp
+```
+
 Create a new Poll
 ```
 !poll "Question" "Choice1" "Choice2"

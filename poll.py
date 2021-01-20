@@ -119,17 +119,41 @@ class Poll:
 class PollBot(Plugin):
     currentPolls = {}
 
+    @command.new("pollhelp")
+    async def poll_help(self, evt: MessageEvent):
+        log.debug(evt.sender)
+        helptext = f"""Hey <a href=\"https://matrix.to/#/{evt.sender}\">{evt.sender}</a>,
+I'm here to help you with polls. A poll is usually a message from me sent at your request (`!poll` command).
+I also react to poll messages with 🔢 emojis representing the different choices. You can assign emojis to choices yourself.
+Users can vote by reacting to a poll message with the corresponding emoji. Enforcing single choice is not supported.
+Results can be seen by using the `!pollresults` command or by viewing the reactions of a poll message.
+
+# Create a poll
+... using quotes: `!poll "Question" "choice 1" "choice 2" ...`
+
+or by using newlines between question and choices:
+```
+!poll Question
+choice 1
+choice 2
+...
+```
+
+If the first character of a choice is an emoji (i.e. `!poll "How are you?" "👍️Good" "👎️Bad"`) it will be used for voting instead a default one.
+
+The `!lightpoll` command will also create a poll but will use your message directly as the poll message instead of replying.
+
+# View results
+Just send `!pollresults` and I will reply with the results of the latest poll.
+If you append the ID of the poll (look at the poll message) to the command (i.e. `!pollresults 1`) you can get results of older polls.
+"""
+        await evt.reply(helptext, allow_html=True)
+
     async def create_poll(self, evt, poll_setup):
         try:
             poll = Poll.parse(poll_setup, evt.sender)
         except ValueError:
-            response = """You need to enter at least 2 choices.
-Syntax: '!poll "Question" "choice" "choice" ...'  
-or: '!poll Question  
-choice  
-choice'
-
-If the first character of a choice is an emoji it will be used for voting instead a default one."""
+            response = "You need to enter at least 2 choices. **For help send `!pollhelp`**"
             await evt.reply(response)
             return None
         else:
@@ -140,7 +164,7 @@ If the first character of a choice is an emoji it will be used for voting instea
             self.currentPolls[evt.room_id].append(poll)
             return poll
 
-    @command.new("poll", help='Creates a new poll. Usage \'!poll "Question" "choice" "choice" ... \'')
+    @command.new("poll", help='Creates a new poll.')
     @command.argument("poll_setup", pass_raw=True, required=True)
     async def poll_handler(self, evt: MessageEvent, poll_setup: str) -> None:
         poll = await self.create_poll(evt, poll_setup)
